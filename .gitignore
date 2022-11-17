@@ -1,3 +1,4 @@
-# crosstool-ng artifacts
 .build/
 build.log
+build/
+staging/
