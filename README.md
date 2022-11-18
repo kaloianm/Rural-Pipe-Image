@@ -114,6 +114,26 @@ make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 ```
 
+## LIBEXPAT
+Libexpat is a prerequisite for DBus
+```
+git clone --depth 1 --branch R_2_5_0 --single-branch https://github.com/libexpat/libexpat.git
+```
+
+### Local compile
+```
+TODO
+```
+
+### Cross-compile
+```
+cd expat
+./configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf
+
+make -j9
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX
+```
+
 ## PYTHON 3.11
 Some of the RuralPipe's modules use functionality from a later Python so we build version 3.11.
 ```
@@ -145,13 +165,29 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 ```
 
 ## DBUS
+```
+git clone --depth 1 --branch dbus-1.14.4 --single-branch https://gitlab.freedesktop.org/dbus/dbus.git
+```
+
 ### Local compile
 ```
 TODO
 ```
 
 ### Cross-compile
-TODO
+```
+env \
+  CC="$CC -I$X_COMPILE_STAGING_PREFIX/usr/local/include -I$X_COMPILE_STAGING_PREFIX/usr/local/include/ncurses -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+  CXX="$CXX -I$X_COMPILE_STAGING_PREFIX/usr/local/include -I$X_COMPILE_STAGING_PREFIX/usr/local/include/ncurses -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+  LD="$LD -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+./autogen.sh --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf \
+  --disable-Werror \
+  --with-system-socket=/run/dbus/system_bus_socket \
+  --with-session-socket-dir=/var/run/dbus/system_bus_socket
+
+make -j9
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX
+```
 
 ## GLIBC (Optional)
 ```
