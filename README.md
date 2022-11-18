@@ -6,6 +6,17 @@ This project contains the necessary scripts and automation to build a bootable R
 
 # Building the cross-compiler toolchain
 This project uses [crosstool-ng](https://crosstool-ng.github.io/) as the means of building the cross-compiler toolchain. Due to the fact that RaspiOS is still on [libc 2.31](https://sourceware.org/git/glibc.git), the compiler needs to stay on GCC 10 since as of the time of this writing, later GCC versions fail to compile older libc versions.
+```
+git clone --depth 1 --branch crosstool-ng-1.25.0 --single-branch https://github.com/crosstool-ng/crosstool-ng.git
+
+sudo apt install build-essential autoconf flex texinfo help2man gawk libtool-bin libncurses-dev bison yacc
+./bootstrap
+env \
+  LOCAL_TARBALLS_DIR=$HOME/Temp/ct-ng-cache \
+./configure --prefix=$HOME/.local
+make -j9
+make install
+```
 
 # Manual compilation steps
 In order to start the cross-compilation environment locally, use the following script which will start a sub-shell with the appropriate environment variables configured.
@@ -165,6 +176,7 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 ```
 
 ## DBUS
+The dbus library is a prerequisite for the ModemManager service.
 ```
 git clone --depth 1 --branch dbus-1.14.4 --single-branch https://gitlab.freedesktop.org/dbus/dbus.git
 ```
