@@ -1,5 +1,3 @@
-.build/
-**/.config.old
+.build
+.config.old
 build.log
-build/
-staging/
