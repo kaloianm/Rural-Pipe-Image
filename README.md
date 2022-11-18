@@ -87,9 +87,10 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 ```
 
 ## LIBUUID
-Libffi is a prerequisite for Python's `_uuid` module.
+Libuuid is a prerequisite for Python's `_uuid` module.
 ```
 git clone --depth 1 --branch stable/v2.38 --single-branch https://github.com/util-linux/util-linux.git
+sudo apt install autopoint gettext pkg-config
 ```
 
 ### Local compile
@@ -107,7 +108,7 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 ```
 
 ## LIBNCURSES
-Libncurses is a prerequisite for Python's curses module.
+Libncurses is a prerequisite for Python's `curses` module.
 ```
 git clone --depth 1 --branch v6.3 --single-branch https://github.com/mirror/ncurses.git
 ```
@@ -139,6 +140,7 @@ TODO
 ### Cross-compile
 ```
 cd expat
+./buildconf.sh
 ./configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf
 
 make -j9
