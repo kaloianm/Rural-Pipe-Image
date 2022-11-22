@@ -5,27 +5,22 @@
 This project contains the necessary scripts and automation to build a bootable RuralPipe image for Raspberry Pi 4
 
 # Building the cross-compiler toolchain
-This project uses [crosstool-ng](https://crosstool-ng.github.io/) as the means of building the cross-compiler toolchain. Due to the fact that RaspiOS is still on [libc 2.31](https://sourceware.org/git/glibc.git), the compiler needs to stay on GCC 10 since as of the time of this writing, later GCC versions fail to compile older libc versions.
-```
-git clone --depth 1 --branch crosstool-ng-1.25.0 --single-branch https://github.com/crosstool-ng/crosstool-ng.git
+This project uses [crosstool-ng](https://crosstool-ng.github.io/) as the means of building the cross-compiler toolchain. Due to the fact that RasPiOS (Raspberry Pi OS) is still on [libc 2.31](https://sourceware.org/git/glibc.git), the compiler needs to stay on GCC 10 since as of the time of this writing, later GCC versions fail to compile older libc versions.
 
-sudo apt install build-essential autoconf flex texinfo help2man gawk libtool-bin libncurses-dev bison yacc
-./bootstrap
-env \
-  LOCAL_TARBALLS_DIR=$HOME/Temp/ct-ng-cache \
-./configure --prefix=$HOME/.local
-make -j9
-make install
-```
+Follow the instructions [here](ct-ng-cross-compiler-rpi4/README.md).
 
-# Manual compilation steps
+# Installing/compiling prerequisites
+The RuralPipe Image uses newer versions of Python, DBus and ModemManager than what natively comes with RasPiOS. Because of this, these utilities need to be cross-compiled first. These utilities in turn depend on libraries, which are also quite old on RasPiOS, so these need to be compiled from source as well.
+
+In addition, the PyMM module uses functionality (such as the `case` statement) which is only present in Python 3.10 and later. These are not readily available on RasPiOS, so they need to be compiled from source as well.
+
 In order to start the cross-compilation environment locally, use the following script which will start a sub-shell with the appropriate environment variables configured.
 ```
 ./x-compile-env.sh armv8-rpi4-linux-gnueabihf
 ```
 
 ## OPENSSL 3
-Openssl-3 is a prerequisite for the Python SSL module.
+Openssl-3 is a prerequisite for the Python `_ssl` module.
 ```
 git clone --depth 1 --branch openssl-3.0.7 --single-branch https://github.com/openssl/openssl.git
 ```
@@ -48,14 +43,16 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 ```
 
 ## ZLIB
-zLib is a prerequisite for the Python zlib module.
+zLib is a prerequisite for the Python `_zlib` module.
+
+## Compile from source
 ```
 git clone --depth 1 --branch v1.2.13 --single-branch https://github.com/madler/zlib.git
 ```
 
 ### Local compile
 ```
-TODO
+NOT NECESSARY
 ```
 
 ### Cross-compile
@@ -74,7 +71,7 @@ git clone --depth 1 --branch v3.4.4 --single-branch https://github.com/libffi/li
 
 ### Local compile
 ```
-TODO
+NOT NECESSARY
 ```
 
 ### Cross-compile
@@ -95,7 +92,7 @@ sudo apt install autopoint gettext pkg-config
 
 ### Local compile
 ```
-TODO
+NOT NECESSARY
 ```
 
 ### Cross-compile
@@ -115,7 +112,7 @@ git clone --depth 1 --branch v6.3 --single-branch https://github.com/mirror/ncur
 
 ### Local compile
 ```
-TODO
+NOT NECESSARY
 ```
 
 ### Cross-compile
@@ -134,7 +131,7 @@ git clone --depth 1 --branch R_2_5_0 --single-branch https://github.com/libexpat
 
 ### Local compile
 ```
-TODO
+NOT NECESSARY
 ```
 
 ### Cross-compile
@@ -155,7 +152,11 @@ git clone --depth 1 --branch v3.11.0 --single-branch https://github.com/python/c
 
 ### Local compile
 ```
-./configure --prefix=/opt/python/3.11.0/ --with-openssl=/opt/openssl3 --with-openssl-rpath=auto --enable-optimizations --with-lto --with-computed-gotos --with-system-ffi
+./configure --prefix=/opt/python/3.11.0/ --with-openssl=/opt/openssl3 --with-openssl-rpath=auto \
+   --enable-optimizations --with-computed-gotos
+
+make -j9
+sudo make install
 ```
 
 ### Cross-compile
@@ -171,7 +172,7 @@ env \
 ./configure -C --with-openssl=$HOME/workspace/rpi/install/usr/local --with-openssl-rpath=/usr/local/lib \
   --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --with-build-python=/opt/python/3.11.0/bin/python3.11 \
-  --enable-optimizations --with-lto --with-computed-gotos --with-system-ffi --disable-ipv6
+  --enable-optimizations --with-computed-gotos --disable-ipv6
 
 make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX
