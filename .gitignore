@@ -1,3 +1,5 @@
 .build
 .config.old
 build.log
+build/
+staging/

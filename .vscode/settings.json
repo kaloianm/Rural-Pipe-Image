@@ -1,0 +1,9 @@
+{
+    "files.exclude": {
+
+    },
+    "files.watcherExclude": {
+        "**/build": true,
+        "**/staging": true
+    }
+}
