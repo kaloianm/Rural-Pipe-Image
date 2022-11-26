@@ -27,15 +27,17 @@ git clone --depth 1 --branch openssl-3.0.7 --single-branch https://github.com/op
 
 ### Local compile
 ```
-./Configure --prefix=/opt/openssl3 --openssldir=/opt/openssl3 -Wl,-rpath=/opt/openssl3/lib -Wl,--enable-new-dtags
+mkdir build-dev-machine && cd "$_"
+../Configure --prefix=/opt/openssl3 --openssldir=/opt/openssl3 -Wl,-rpath=/opt/openssl3/lib -Wl,--enable-new-dtags
 
 make -j9
-make install
+sudo make install
 ```
 
 ### Cross-compile
 ```
-./Configure linux-generic32 \
+mkdir build-rpi && cd "$_"
+../Configure linux-generic32 \
   --prefix=/usr/local --openssldir=/usr/local -Wl,-rpath=/usr/local/lib -Wl,--enable-new-dtags
 
 make -j9
@@ -67,6 +69,7 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 Libffi is a prerequisite for Python's `_ctypes` module.
 ```
 git clone --depth 1 --branch v3.4.4 --single-branch https://github.com/libffi/libffi.git
+sudo apt install gettext
 ```
 
 ### Local compile
@@ -117,7 +120,7 @@ NOT NECESSARY
 
 ### Cross-compile
 ```
-./configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf
+./configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf --with-shared
 
 make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX
@@ -148,12 +151,20 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 Some of the RuralPipe's modules use functionality from a later Python so we build version 3.11.
 ```
 git clone --depth 1 --branch v3.11.0 --single-branch https://github.com/python/cpython.git
+
+apt download libbz2-dev libtirpc-dev libgdbm-dev libreadline-dev lzma-dev lzma
+for i in *.deb; do dpkg-deb --extract $i .; done
 ```
 
 ### Local compile
 ```
-./configure --prefix=/opt/python/3.11.0/ --with-openssl=/opt/openssl3 --with-openssl-rpath=auto \
-   --enable-optimizations --with-computed-gotos
+mkdir build-dev-machine && cd "$_"
+
+../configure -C \
+  --prefix=/opt/python/3.11.0/ \
+  --with-openssl=/opt/openssl3 --with-openssl-rpath=auto \
+  --enable-optimizations \
+  --with-computed-gotos
 
 make -j9
 sudo make install
@@ -161,18 +172,30 @@ sudo make install
 
 ### Cross-compile
 ```
+mkdir build-rpi && cd "$_"
+
 echo ac_cv_file__dev_ptc=no >> config.site
 echo ac_cv_file__dev_ptmx=no >> config.site
 
 env \
   CONFIG_SITE=config.site \
-  CC="$CC -I$X_COMPILE_STAGING_PREFIX/usr/local/include -I$X_COMPILE_STAGING_PREFIX/usr/local/include/ncurses -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
-  CXX="$CXX -I$X_COMPILE_STAGING_PREFIX/usr/local/include -I$X_COMPILE_STAGING_PREFIX/usr/local/include/ncurses -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
-  LD="$LD -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
-./configure -C --with-openssl=$HOME/workspace/rpi/install/usr/local --with-openssl-rpath=/usr/local/lib \
-  --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
+  CFLAGS="\
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -I$X_COMPILE_STAGING_PREFIX/usr/local/include \
+    -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+  LDFLAGS="\
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+../configure -C \
+  --prefix=/usr/local \
+  --with-openssl=$X_COMPILE_STAGING_PREFIX/usr/local --with-openssl-rpath=/usr/local/lib \
+  --host=armv7l-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --with-build-python=/opt/python/3.11.0/bin/python3.11 \
-  --enable-optimizations --with-computed-gotos --disable-ipv6
+  --enable-optimizations \
+  --with-computed-gotos \
+  --disable-ipv6
 
 make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX
@@ -182,6 +205,8 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 The dbus library is a prerequisite for the ModemManager service.
 ```
 git clone --depth 1 --branch dbus-1.14.4 --single-branch https://gitlab.freedesktop.org/dbus/dbus.git
+
+sudo apt install autoconf-archive
 ```
 
 ### Local compile
@@ -192,11 +217,19 @@ TODO
 ### Cross-compile
 ```
 env \
-  CC="$CC -I$X_COMPILE_STAGING_PREFIX/usr/local/include -I$X_COMPILE_STAGING_PREFIX/usr/local/include/ncurses -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
-  CXX="$CXX -I$X_COMPILE_STAGING_PREFIX/usr/local/include -I$X_COMPILE_STAGING_PREFIX/usr/local/include/ncurses -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
-  LD="$LD -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+  CFLAGS="\
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -I$X_COMPILE_STAGING_PREFIX/usr/local/include \
+    -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+  LDFLAGS="\
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
 ./autogen.sh --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf \
   --disable-Werror \
+  --enable-shared \
+  --without-x \
   --with-system-socket=/run/dbus/system_bus_socket \
   --with-session-socket-dir=/var/run/dbus/system_bus_socket
 
@@ -216,7 +249,9 @@ TODO
 
 ### Cross-compile
 ```
-CHOST=arm ../configure --prefix=/usr/local --host=arm-linux-gnueabihf --disable-sanity-checks
+env \
+  CHOST=arm \
+../configure --prefix=/usr/local --host=arm-linux-gnueabihf --disable-sanity-checks
 
 make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX
@@ -224,7 +259,7 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX
 
 ## Tar the whole /usr directory
 ```
-pushd $X_COMPILE_STAGING_PREFIX
-tar -zcf usr.tar.gz usr
+pushd $X_COMPILE_STAGING_PREFIX/..
+dpkg-deb -Zxz -b staging/ .
 popd
 ```

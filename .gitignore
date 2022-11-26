@@ -2,4 +2,6 @@
 .config.old
 build.log
 build/
-staging/
+!build/README.md
+staging/usr
+sysroot/

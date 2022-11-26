@@ -10,6 +10,7 @@ export PATH="$X_COMPILE_ENV_ROOT/bin:$PATH"
 
 X_COMPILE_TOOLS_PREFIX="$X_COMPILE_ENV_ROOT/bin/$X_COMPILE_ENV_NAME-"
 
+export X_COMPILE_SYSROOT_PREFIX="$(dirname `realpath $0`)/sysroot"
 export X_COMPILE_BUILD_PREFIX="$(dirname `realpath $0`)/build"
 export X_COMPILE_STAGING_PREFIX="$(dirname `realpath $0`)/staging"
 
