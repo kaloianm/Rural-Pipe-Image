@@ -16,11 +16,11 @@ In addition, the PyMM module uses functionality (such as the `case` statement) w
 
 In order to start the cross-compilation environment locally, use the following script which will start a sub-shell with the appropriate environment variables configured.
 ```
-./x-compile-env.sh armv8-rpi4-linux-gnueabihf
+./x-compile-env.sh armv8-RuralPipe-linux-gnueabihf
 ```
 
 ## OPENSSL 3
-Openssl-3 is a prerequisite for the Python `_ssl` module.
+Openssl3 is a prerequisite for the Python `_ssl` module.
 ```
 git clone --depth 1 --branch openssl-3.0.7 --single-branch https://github.com/openssl/openssl.git
 ```
@@ -28,6 +28,7 @@ git clone --depth 1 --branch openssl-3.0.7 --single-branch https://github.com/op
 ### Local compile
 ```
 mkdir build-dev-machine && cd "$_"
+
 ../Configure --prefix=/opt/openssl3 --openssldir=/opt/openssl3 -Wl,-rpath=/opt/openssl3/lib -Wl,--enable-new-dtags
 
 make -j9
@@ -37,123 +38,18 @@ sudo make install
 ### Cross-compile
 ```
 mkdir build-rpi && cd "$_"
+
 ../Configure linux-generic32 \
   --prefix=/usr/local --openssldir=/usr/local -Wl,-rpath=/usr/local/lib -Wl,--enable-new-dtags
 
 make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX
-```
-
-## ZLIB
-zLib is a prerequisite for the Python `_zlib` module.
-
-## Compile from source
-```
-git clone --depth 1 --branch v1.2.13 --single-branch https://github.com/madler/zlib.git
-```
-
-### Local compile
-```
-NOT NECESSARY
-```
-
-### Cross-compile
-```
-CHOST=arm ./configure --prefix=/usr/local
-
-make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX
-```
-
-## LIBFFI
-Libffi is a prerequisite for Python's `_ctypes` module.
-```
-git clone --depth 1 --branch v3.4.4 --single-branch https://github.com/libffi/libffi.git
-sudo apt install gettext
-```
-
-### Local compile
-```
-NOT NECESSARY
-```
-
-### Cross-compile
-```
-./autogen.sh
-./configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf
-
-make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX
-```
-
-## LIBUUID
-Libuuid is a prerequisite for Python's `_uuid` module.
-```
-git clone --depth 1 --branch stable/v2.38 --single-branch https://github.com/util-linux/util-linux.git
-sudo apt install autopoint gettext pkg-config
-```
-
-### Local compile
-```
-NOT NECESSARY
-```
-
-### Cross-compile
-```
-./autogen.sh
-./configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf --disable-all-programs --enable-libuuid
-
-make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX
-```
-
-## LIBNCURSES
-Libncurses is a prerequisite for Python's `curses` module.
-```
-git clone --depth 1 --branch v6.3 --single-branch https://github.com/mirror/ncurses.git
-```
-
-### Local compile
-```
-NOT NECESSARY
-```
-
-### Cross-compile
-```
-./configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf --with-shared
-
-make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX
-```
-
-## LIBEXPAT
-Libexpat is a prerequisite for DBus
-```
-git clone --depth 1 --branch R_2_5_0 --single-branch https://github.com/libexpat/libexpat.git
-```
-
-### Local compile
-```
-NOT NECESSARY
-```
-
-### Cross-compile
-```
-cd expat
-./buildconf.sh
-./configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf
-
-make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-openssl
 ```
 
 ## PYTHON 3.11
 Some of the RuralPipe's modules use functionality from a later Python so we build version 3.11.
 ```
 git clone --depth 1 --branch v3.11.0 --single-branch https://github.com/python/cpython.git
-
-apt download libbz2-dev libtirpc-dev libgdbm-dev libreadline-dev lzma-dev lzma
-for i in *.deb; do dpkg-deb --extract $i .; done
 ```
 
 ### Local compile
@@ -180,14 +76,15 @@ echo ac_cv_file__dev_ptmx=no >> config.site
 env \
   CONFIG_SITE=config.site \
   CFLAGS="\
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     -I$X_COMPILE_STAGING_PREFIX/usr/local/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
     -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
-  LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+  LDFLAGS="\
     -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
 ../configure -C \
   --prefix=/usr/local \
   --with-openssl=$X_COMPILE_STAGING_PREFIX/usr/local --with-openssl-rpath=/usr/local/lib \
@@ -198,10 +95,10 @@ env \
   --disable-ipv6
 
 make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Python3.11
 ```
 
-## DBUS
+## DBUS 1.14
 The dbus library is a prerequisite for the ModemManager service.
 ```
 git clone --depth 1 --branch dbus-1.14.4 --single-branch https://gitlab.freedesktop.org/dbus/dbus.git
@@ -218,14 +115,15 @@ TODO
 ```
 env \
   CFLAGS="\
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     -I$X_COMPILE_STAGING_PREFIX/usr/local/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
     -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
-  LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+  LDFLAGS="\
     -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
 ./autogen.sh --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf \
   --disable-Werror \
   --enable-shared \
@@ -234,7 +132,7 @@ env \
   --with-session-socket-dir=/var/run/dbus/system_bus_socket
 
 make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-DBus
 ```
 
 ## GLIBC (Optional)
@@ -251,15 +149,8 @@ TODO
 ```
 env \
   CHOST=arm \
-../configure --prefix=/usr/local --host=arm-linux-gnueabihf --disable-sanity-checks
+../configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf --disable-sanity-checks
 
 make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX
-```
-
-## Tar the whole /usr directory
-```
-pushd $X_COMPILE_STAGING_PREFIX/..
-dpkg-deb -Zxz -b staging/ .
-popd
 ```

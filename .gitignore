@@ -1,7 +1,12 @@
-.build
+.build/
 .config.old
+
 build.log
-build/
+
+build/*
 !build/README.md
+
 staging/usr
-sysroot/
+
+sysroot/*
+!sysroot/README.md

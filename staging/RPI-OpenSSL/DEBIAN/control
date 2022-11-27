@@ -1,0 +1,5 @@
+Package: RPI-openssl
+Version: 3.0.7-RPI
+Maintainer: Kaloian Manassiev
+Architecture: armhf
+Description: OpenSSL 3 for the RuralPipe dependencies

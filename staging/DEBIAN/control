@@ -1,5 +1,0 @@
-Package: modemmanager-rpi
-Version: 0.1
-Maintainer: Kaloian Manassiev
-Architecture: armhf
-Description: ModemManager for RuralPipe

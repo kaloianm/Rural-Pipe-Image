@@ -1,0 +1,5 @@
+Package: RPI-Python3.11
+Version: 3.11.0-RPI
+Maintainer: Kaloian Manassiev
+Architecture: armhf
+Description: OpenSSL 3 for the RuralPipe dependencies

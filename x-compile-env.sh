@@ -1,4 +1,11 @@
-#/usr/bin/bash
+#/usr/bin/sh
+
+die() {
+    echo "$*" 1>&2
+    exit 1
+}
+
+[ "$#" -eq 1 ] || die "Usage: $0 <cross-compiler name>"
 
 X_COMPILE_ENV_NAME=$1
 X_COMPILE_ENV_ROOT=$HOME/x-tools/$X_COMPILE_ENV_NAME
@@ -10,9 +17,9 @@ export PATH="$X_COMPILE_ENV_ROOT/bin:$PATH"
 
 X_COMPILE_TOOLS_PREFIX="$X_COMPILE_ENV_ROOT/bin/$X_COMPILE_ENV_NAME-"
 
-export X_COMPILE_SYSROOT_PREFIX="$(dirname `realpath $0`)/sysroot"
-export X_COMPILE_BUILD_PREFIX="$(dirname `realpath $0`)/build"
-export X_COMPILE_STAGING_PREFIX="$(dirname `realpath $0`)/staging"
+export X_COMPILE_SYSROOT_PREFIX="$(dirname $(realpath $0))/sysroot"
+export X_COMPILE_BUILD_PREFIX="$(dirname $(realpath $0))/build"
+export X_COMPILE_STAGING_PREFIX="$(dirname $(realpath $0))/staging"
 
 export CC="${X_COMPILE_TOOLS_PREFIX}gcc"
 export CXX="${X_COMPILE_TOOLS_PREFIX}g++"
