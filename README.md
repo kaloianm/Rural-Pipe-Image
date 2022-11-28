@@ -40,10 +40,12 @@ sudo make install
 mkdir build-rpi && cd "$_"
 
 ../Configure linux-generic32 \
-  --prefix=/usr/local --openssldir=/usr/local -Wl,-rpath=/usr/local/lib -Wl,--enable-new-dtags
+  --prefix=/usr/local --openssldir=/usr/local \
+  -Wl,-rpath=/usr/local/lib \
+  -Wl,--enable-new-dtags
 
 make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-openssl
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL
 ```
 
 ## PYTHON 3.11
@@ -76,26 +78,36 @@ echo ac_cv_file__dev_ptmx=no >> config.site
 env \
   CONFIG_SITE=config.site \
   CFLAGS="\
-    -I$X_COMPILE_STAGING_PREFIX/usr/local/include \
+    -I$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
   LDFLAGS="\
-    -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
-../configure -C \
-  --prefix=/usr/local \
-  --with-openssl=$X_COMPILE_STAGING_PREFIX/usr/local --with-openssl-rpath=/usr/local/lib \
-  --host=armv7l-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
+    " \
+../configure -C --prefix=/usr/local \
+  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
+  --enable-shared \
+  --with-openssl=$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local \
+  --with-openssl-rpath=/usr/local/lib \
+  --with-system-expat \
+  --with-system-ffi \
   --with-build-python=/opt/python/3.11.0/bin/python3.11 \
   --enable-optimizations \
   --with-computed-gotos \
   --disable-ipv6
 
 make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Python3.11
+
+patchelf --add-needed /usr/lib/arm-linux-gnueabihf/libffi.so.7 ./build/lib.linux-arm-3.11/_ctypes.cpython-311-arm-linux-gnueabihf.so
+patchelf --add-needed /lib/arm-linux-gnueabihf/libexpat.so.1 ./build/lib.linux-arm-3.11/pyexpat.cpython-311-arm-linux-gnueabihf.so
+
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Python3
 ```
 
 ## DBUS 1.14
@@ -115,18 +127,22 @@ TODO
 ```
 env \
   CFLAGS="\
-    -I$X_COMPILE_STAGING_PREFIX/usr/local/include \
+    -I$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
   LDFLAGS="\
-    -L$X_COMPILE_STAGING_PREFIX/usr/local/lib" \
+    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
-./autogen.sh --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf \
-  --disable-Werror \
+    " \
+./autogen.sh --prefix=/usr/local \
+  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
+  --disable-Werror \
   --without-x \
   --with-system-socket=/run/dbus/system_bus_socket \
   --with-session-socket-dir=/var/run/dbus/system_bus_socket
@@ -149,8 +165,10 @@ TODO
 ```
 env \
   CHOST=arm \
-../configure --prefix=/usr/local --host=armv7l-unknown-linux-gnueabihf --disable-sanity-checks
+../configure --prefix=/usr/local \
+  --host=armv8-unknown-linux-gnueabihf \
+  --disable-sanity-checks
 
 make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-GlibC
 ```

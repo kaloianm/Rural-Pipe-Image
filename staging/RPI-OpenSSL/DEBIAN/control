@@ -1,4 +1,4 @@
-Package: RPI-openssl
+Package: RPI-OpenSSL
 Version: 3.0.7-RPI
 Maintainer: Kaloian Manassiev
 Architecture: armhf

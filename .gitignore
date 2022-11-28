@@ -6,7 +6,10 @@ build.log
 build/*
 !build/README.md
 
-staging/usr
+staging/*.deb
+staging/RPI-DBus/usr
+staging/RPI-OpenSSL/usr
+staging/RPI-Python3/usr
 
 sysroot/*
 !sysroot/README.md

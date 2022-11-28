@@ -1,0 +1,5 @@
+Package: RPI-DBus
+Version: 1.14.4-RPI
+Maintainer: Kaloian Manassiev
+Architecture: armhf
+Description: D-Bus for the RuralPipe dependencies
