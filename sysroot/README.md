@@ -8,6 +8,7 @@ apt download \
   libgdbm-compat4 libgdbm-compat-dev \
   libgdbm6 libgdbm-dev \
   liblzma5 liblzma-dev \
+  libmount1 libmount-dev \
   libnsl2 libnsl-dev \
   libreadline8 libreadline-dev \
   libtirpc3 libtirpc-dev \

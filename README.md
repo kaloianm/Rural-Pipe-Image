@@ -131,11 +131,9 @@ env \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
   LDFLAGS="\
-    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
@@ -149,6 +147,71 @@ env \
 
 make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-DBus
+```
+
+## GLib
+The Glib library is prerequisite for the ModemManager service.
+```
+git clone --depth 1 --branch 2.56.4 --single-branch https://gitlab.gnome.org/GNOME/glib.git
+```
+
+### Local compile
+```
+TODO
+```
+
+### Cross-compile
+```
+echo glib_cv_stack_grows=no >> config.site
+echo glib_cv_uscore=yes >> config.site
+
+env \
+  CONFIG_SITE=config.site \
+  CFLAGS="\
+    -I$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
+  LDFLAGS="\
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
+./autogen.sh --prefix=/usr/local \
+  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
+  --with-pcre=internal
+```
+
+## ModemManager 1.18
+```
+git clone --depth 1 --branch 1.18.12 --single-branch https://gitlab.freedesktop.org/mobile-broadband/ModemManager.git
+```
+
+### Local compile
+```
+TODO
+```
+
+### Cross-compile
+```
+env \
+  CFLAGS="\
+    -I$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
+    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
+  LDFLAGS="\
+    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
+./autogen.sh --prefix=/usr/local \
+  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu
 ```
 
 ## GLIBC (Optional)
