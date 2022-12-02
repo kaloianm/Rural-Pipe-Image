@@ -8,6 +8,7 @@ build/*
 
 staging/*.deb
 staging/RPI-DBus/usr
+staging/RPI-Glib/usr
 staging/RPI-OpenSSL/usr
 staging/RPI-Python3/usr
 

@@ -147,7 +147,7 @@ make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-DBus
 ```
 
-## GLib
+## GLib 2.56.4
 The Glib library is prerequisite for the ModemManager service.
 ```
 git clone --depth 1 --branch 2.56.4 --single-branch https://gitlab.gnome.org/GNOME/glib.git
@@ -175,11 +175,18 @@ env \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
-    -Wl,-rpath=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
+  PKG_CONFIG_PATH=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf/pkgconfig \
+  PKG_CONFIG_SYSROOT_DIR=$X_COMPILE_SYSROOT_PREFIX \
 ./autogen.sh --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
-  --with-pcre=internal
+  --enable-shared \
+  --with-pcre=internal \
+  --with-python=python3
+
+make -j9
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Glib
 ```
 
 ## ModemManager 1.18

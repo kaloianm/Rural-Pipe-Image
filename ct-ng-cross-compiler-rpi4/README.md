@@ -5,11 +5,13 @@ git clone --depth 1 --branch crosstool-ng-1.25.0 --single-branch https://github.
 
 sudo apt install \
     autoconf autoconf-archive \
+    autopoint \
     bison \
     build-essential \
     cmake \
     flex \
     gawk \
+    gettext \
     help2man \
     libbz2-1.0 libbz2-dev \
     libffi8 libffi-dev \
