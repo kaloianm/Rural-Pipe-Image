@@ -3,7 +3,32 @@ Tested against [crosstool-NG](https://github.com/crosstool-ng/crosstool-ng) vers
 ```
 git clone --depth 1 --branch crosstool-ng-1.25.0 --single-branch https://github.com/crosstool-ng/crosstool-ng.git
 
-sudo apt install build-essential autoconf flex texinfo help2man gawk libtool-bin libncurses-dev bison yacc
+sudo apt install \
+    autoconf autoconf-archive \
+    bison \
+    build-essential \
+    cmake \
+    flex \
+    gawk \
+    help2man \
+    libbz2-1.0 libbz2-dev \
+    libffi8 libffi-dev \
+    libgdbm-compat4 libgdbm-compat-dev \
+    libgdbm6 libgdbm-dev \
+    liblzma5 liblzma-dev \
+    libncurses-dev \
+    libnsl2 libnsl-dev \
+    libreadline8 libreadline-dev \
+    libtirpc3 libtirpc-dev \
+    libtool-bin \
+    libuuid1 uuid-dev \
+    patchelf \
+    pkg-config \
+    python3-tk \
+    texinfo \
+    yacc \
+    zlib1g zlib1g-dev
+
 ./bootstrap
 ./configure --prefix=$HOME/.local
 make -j9

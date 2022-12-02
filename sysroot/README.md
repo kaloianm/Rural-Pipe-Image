@@ -3,7 +3,7 @@ This directory is the complementary sysroot area for the cross-compiler. It is a
 ```
 apt download \
   libbz2-1.0 libbz2-dev \
-  libexpat1-dev \
+  libexpat1 libexpat1-dev \
   libffi7 libffi-dev \
   libgdbm-compat4 libgdbm-compat-dev \
   libgdbm6 libgdbm-dev \

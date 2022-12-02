@@ -114,8 +114,6 @@ make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Python3
 The dbus library is a prerequisite for the ModemManager service.
 ```
 git clone --depth 1 --branch dbus-1.14.4 --single-branch https://gitlab.freedesktop.org/dbus/dbus.git
-
-sudo apt install autoconf-archive
 ```
 
 ### Local compile
