@@ -166,7 +166,6 @@ echo glib_cv_uscore=yes >> config.site
 env \
   CONFIG_SITE=config.site \
   CFLAGS="\
-    -I$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
@@ -204,20 +203,21 @@ TODO
 ```
 env \
   CFLAGS="\
-    -I$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
-    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
-    " \
-  LDFLAGS="\
-    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
+    -L$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/lib \
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
+  LDFLAGS="\
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
+  PKG_CONFIG_PATH="$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" \
 ./autogen.sh --prefix=/usr/local \
-  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu
+  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
+  --enable-shared
 ```
 
 ## GLIBC (Optional)

@@ -28,6 +28,7 @@ sudo apt install \
     pkg-config \
     python3-tk \
     texinfo \
+    xsltproc \
     yacc \
     zlib1g zlib1g-dev
 
