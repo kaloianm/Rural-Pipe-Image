@@ -170,15 +170,16 @@ env \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_BUILD_PREFIX/glib/gmodule/.libs \
     " \
-  PKG_CONFIG_PATH=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf/pkgconfig \
-  PKG_CONFIG_SYSROOT_DIR=$X_COMPILE_SYSROOT_PREFIX \
 ./autogen.sh --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
