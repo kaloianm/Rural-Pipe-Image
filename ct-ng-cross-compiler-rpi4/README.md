@@ -19,6 +19,7 @@ sudo apt install \
     libgdbm6 libgdbm-dev \
     liblzma5 liblzma-dev \
     libncurses-dev \
+    libeditline0 libeditline-dev \
     libnsl2 libnsl-dev \
     libreadline8 libreadline-dev \
     libtirpc3 libtirpc-dev \

@@ -1,5 +1,5 @@
-Package: RPI-GLib
+Package: RPI-Glib
 Version: 2.56.4-RPI
 Maintainer: Kaloian Manassiev
 Architecture: armhf
-Description: GLib for the RuralPipe dependencies
+Description: Glib for the RuralPipe dependencies

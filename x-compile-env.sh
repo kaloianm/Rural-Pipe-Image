@@ -28,7 +28,7 @@ export AR="${X_COMPILE_TOOLS_PREFIX}ar"
 export RANLIB="${X_COMPILE_TOOLS_PREFIX}ranlib"
 export READELF="${X_COMPILE_TOOLS_PREFIX}readelf"
 
-export PKG_CONFIG_PATH="$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf/pkgconfig"
+export PKG_CONFIG_PATH="$X_COMPILE_SYSROOT_PREFIX/usr/lib/pkgconfig:$X_COMPILE_SYSROOT_PREFIX/usr/local/lib/pkgconfig:$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf/pkgconfig"
 export PKG_CONFIG_SYSROOT_DIR="$X_COMPILE_SYSROOT_PREFIX"
 
 mkdir -p ./staging && mkdir -p ./build && cd ./build && exec $SHELL

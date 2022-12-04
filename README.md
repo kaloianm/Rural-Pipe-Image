@@ -29,9 +29,9 @@ git clone --depth 1 --branch openssl-3.0.7 --single-branch https://github.com/op
 ```
 mkdir build-dev-machine && cd "$_"
 
-../Configure --prefix=/opt/openssl3 --openssldir=/opt/openssl3 -Wl,-rpath=/opt/openssl3/lib -Wl,--enable-new-dtags
+../Configure --prefix=/usr/local/ --openssldir=/usr/local/ -Wl,-rpath=/usr/local/lib -Wl,--enable-new-dtags
 
-make -j9
+make -j11
 sudo make install
 ```
 
@@ -60,12 +60,12 @@ git clone --depth 1 --branch v3.11.0 --single-branch https://github.com/python/c
 mkdir build-dev-machine && cd "$_"
 
 ../configure -C \
-  --prefix=/opt/python/3.11.0/ \
-  --with-openssl=/opt/openssl3 --with-openssl-rpath=auto \
+  --prefix=/usr/local \
+  --with-openssl=/usr/local --with-openssl-rpath=auto \
   --enable-optimizations \
   --with-computed-gotos
 
-make -j9
+make -j11
 sudo make install
 ```
 
@@ -90,16 +90,16 @@ env \
 ../configure -C --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
-  --with-openssl=$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local \
+  --with-openssl=$X_COMPILE_SYSROOT_PREFIX/usr/local \
   --with-openssl-rpath=/usr/local/lib \
   --with-system-expat \
   --with-system-ffi \
-  --with-build-python=/opt/python/3.11.0/bin/python3.11 \
+  --with-build-python=/usr/local/bin/python3.11 \
   --enable-optimizations \
   --with-computed-gotos \
   --disable-ipv6
 
-make -j9
+make -j11
 
 patchelf --add-needed /usr/lib/arm-linux-gnueabihf/libffi.so.7 ./build/lib.linux-arm-3.11/_ctypes.cpython-311-arm-linux-gnueabihf.so
 patchelf --add-needed /lib/arm-linux-gnueabihf/libexpat.so.1 ./build/lib.linux-arm-3.11/pyexpat.cpython-311-arm-linux-gnueabihf.so
@@ -120,16 +120,6 @@ TODO
 
 ### Cross-compile
 ```
-env \
-  CFLAGS="\
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    " \
-  LDFLAGS="\
-    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
-    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
-    " \
 ./autogen.sh --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
@@ -138,15 +128,15 @@ env \
   --with-system-socket=/run/dbus/system_bus_socket \
   --with-session-socket-dir=/var/run/dbus/system_bus_socket
 
-make -j9
+make -j11
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-DBus
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 ```
 
-## GLib 2.56.4
+## GLib 2.58.3
 The Glib library is prerequisite for the ModemManager service.
 ```
-git clone --depth 1 --branch 2.56.4 --single-branch https://gitlab.gnome.org/GNOME/glib.git
+git clone --depth 1 --branch 2.58.3 --single-branch https://gitlab.gnome.org/GNOME/glib.git
 ```
 
 ### Local compile
@@ -164,9 +154,6 @@ env \
   CFLAGS="\
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
-    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
@@ -175,13 +162,14 @@ env \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
-./autogen.sh --prefix=/usr/local \
+./autogen.sh \
+  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
   --with-pcre=internal \
   --with-python=python3
 
-make -j9
+make -j11
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Glib
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 ```
@@ -200,23 +188,57 @@ TODO
 ```
 env \
   CFLAGS="\
-    -I$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/include/glib-2.0 \
-    -I$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/lib/glib-2.0/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
     " \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
-    -lglib-2.0 \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
-./autogen.sh --prefix=/usr/local \
+./autogen.sh \
+  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
-  --enable-shared
+  --enable-shared \
+  --disable-Werror
 
-make -j9
+make -j11
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibMBIM
+make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
+```
+
+## LibQMI 1.30.8
+```
+git clone --depth 1 --branch 1.30.8 --single-branch https://gitlab.freedesktop.org/mobile-broadband/libqmi.git
+```
+
+### Local compile
+```
+TODO
+```
+
+### Cross-compile
+```
+env \
+  CFLAGS="\
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    " \
+  LDFLAGS="\
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
+./autogen.sh \
+  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
+  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
+  --enable-shared \
+  --disable-Werror
+
+make -j11
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibQMI
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 ```
 
@@ -234,22 +256,22 @@ TODO
 ```
 env \
   CFLAGS="\
-    -I$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/include/glib-2.0 \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
-    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
-./autogen.sh --prefix=/usr/local \
+./autogen.sh \
+  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
-  --enable-shared
+  --enable-shared \
+  --disable-Werror
 
-make -j9
+make -j11
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-ModemManager
 ```
 
@@ -265,12 +287,15 @@ TODO
 
 ### Cross-compile
 ```
+mkdir build-rpi && cd "$_"
+
 env \
-  CHOST=arm \
-../configure --prefix=/usr/local \
-  --host=armv8-unknown-linux-gnueabihf \
+  CHOST=armhf \
+../configure \
+  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
+  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --disable-sanity-checks
 
-make -j9
+make -j11
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-GlibC
 ```

@@ -1,0 +1,5 @@
+Package: RPI-ModemManager
+Version: 1.18.12-RPI
+Maintainer: Kaloian Manassiev
+Architecture: armhf
+Description: ModemManager for the RuralPipe dependencies
