@@ -46,6 +46,7 @@ mkdir build-rpi && cd "$_"
 
 make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL
+make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 ```
 
 ## PYTHON 3.11
@@ -78,15 +79,11 @@ echo ac_cv_file__dev_ptmx=no >> config.site
 env \
   CONFIG_SITE=config.site \
   CFLAGS="\
-    -I$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
-    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
   LDFLAGS="\
-    -L$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/lib \
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
@@ -125,11 +122,9 @@ TODO
 ```
 env \
   CFLAGS="\
-    -I$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL/usr/local/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
@@ -145,6 +140,7 @@ env \
 
 make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-DBus
+make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 ```
 
 ## GLib 2.56.4
@@ -175,9 +171,9 @@ env \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_BUILD_PREFIX/glib/gmodule/.libs \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
-    -Wl,-rpath-link=$X_COMPILE_BUILD_PREFIX/glib/gmodule/.libs \
     " \
 ./autogen.sh --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
@@ -187,6 +183,41 @@ env \
 
 make -j9
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Glib
+make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
+```
+
+## LibMBIM 1.26.4
+```
+git clone --depth 1 --branch 1.26.4 --single-branch https://gitlab.freedesktop.org/mobile-broadband/libmbim.git
+```
+
+### Local compile
+```
+TODO
+```
+
+### Cross-compile
+```
+env \
+  CFLAGS="\
+    -I$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/include/glib-2.0 \
+    -I$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/lib/glib-2.0/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
+    " \
+  LDFLAGS="\
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -lglib-2.0 \
+    " \
+./autogen.sh --prefix=/usr/local \
+  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
+  --enable-shared
+
+make -j9
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibMBIM
+make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 ```
 
 ## ModemManager 1.18
@@ -203,10 +234,10 @@ TODO
 ```
 env \
   CFLAGS="\
+    -I$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/include/glib-2.0 \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
-    -L$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/lib \
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
@@ -214,10 +245,12 @@ env \
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
-  PKG_CONFIG_PATH="$X_COMPILE_STAGING_PREFIX/RPI-Glib/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" \
 ./autogen.sh --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared
+
+make -j9
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-ModemManager
 ```
 
 ## GLIBC (Optional)

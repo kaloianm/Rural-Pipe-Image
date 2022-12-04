@@ -1,0 +1,5 @@
+Package: RPI-LibMBIM
+Version: 1.26.4-RPI
+Maintainer: Kaloian Manassiev
+Architecture: armhf
+Description: LibMBIM for the RuralPipe dependencies
