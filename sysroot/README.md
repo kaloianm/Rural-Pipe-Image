@@ -20,6 +20,7 @@ apt download \
   libreadline8 libreadline-dev \
   libselinux1 libselinux1-dev \
   libsepol1 libsepol1-dev \
+  libtinfo6 libtinfo-dev \
   libtirpc3 libtirpc-dev \
   libudev1 libudev-dev \
   libuuid1 uuid-dev \
@@ -28,8 +29,6 @@ apt download \
 
 Then, on the build machine:
 ```
-pushd $X_COMPILE_SYSROOT_PREFIX
-
 for i in *.deb; do dpkg-deb --extract $i .; done && rm *.deb
 
 ln -sf ../../../lib/arm-linux-gnueabihf/libbz2.so.1.0 usr/lib/arm-linux-gnueabihf/libbz2.so
@@ -42,7 +41,8 @@ ln -sf ../../../lib/arm-linux-gnueabihf/libsepol.so.1 usr/lib/arm-linux-gnueabih
 ln -sf ../../../lib/arm-linux-gnueabihf/libtirpc.so.3.0.0 usr/lib/arm-linux-gnueabihf/libtirpc.so
 ln -sf ../../../lib/arm-linux-gnueabihf/libz.so.1.2.11 usr/lib/arm-linux-gnueabihf/libz.so
 
-for i in `grep -R ' /usr/local/lib/lib' * | awk -F\: '{ print $1; }' | sort | uniq`; do perl -pi -e 's/\/usr\/local\/lib\/lib/\/home\/parallels\/x-tools\/armv8-RuralPipe-linux-gnueabihf\/armv8-RuralPipe-linux-gnueabihf\/sysroot\/usr\/local\/lib\/lib/g' $i; done
-
-popd
+for i in `grep -R '[= ]/usr' --include *.pc --include *.la | awk -F\: '{ print $1; }' | sort | uniq`; do
+ perl -pi -e 's/ \/usr/ \/home\/parallels\/x-tools\/armv8-RuralPipe-linux-gnueabihf\/armv8-RuralPipe-linux-gnueabihf\/sysroot\/usr/g' $i;
+ perl -pi -e 's/=\/usr/=\/home\/parallels\/x-tools\/armv8-RuralPipe-linux-gnueabihf\/armv8-RuralPipe-linux-gnueabihf\/sysroot\/usr/g' $i;
+done
 ```

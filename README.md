@@ -44,9 +44,9 @@ mkdir build-rpi && cd "$_"
   -Wl,-rpath=/usr/local/lib \
   -Wl,--enable-new-dtags
 
-make -j9
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL
+make -j11
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL
 ```
 
 ## PYTHON 3.11
@@ -86,8 +86,11 @@ env \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
-../configure -C --prefix=/usr/local \
+../configure -C \
+  --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
   --with-openssl=$X_COMPILE_SYSROOT_PREFIX/usr/local \
@@ -104,6 +107,7 @@ make -j11
 patchelf --add-needed /usr/lib/arm-linux-gnueabihf/libffi.so.7 ./build/lib.linux-arm-3.11/_ctypes.cpython-311-arm-linux-gnueabihf.so
 patchelf --add-needed /lib/arm-linux-gnueabihf/libexpat.so.1 ./build/lib.linux-arm-3.11/pyexpat.cpython-311-arm-linux-gnueabihf.so
 
+make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Python3
 ```
 
@@ -120,17 +124,28 @@ TODO
 
 ### Cross-compile
 ```
-./autogen.sh --prefix=/usr/local \
+env \
+  CFLAGS="\
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
+    " \
+  LDFLAGS="\
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
+./autogen.sh \
+  --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
   --disable-Werror \
-  --without-x \
   --with-system-socket=/run/dbus/system_bus_socket \
   --with-session-socket-dir=/var/run/dbus/system_bus_socket
 
 make -j11
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-DBus
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-DBus
 ```
 
 ## GLib 2.58.3
@@ -152,8 +167,8 @@ echo glib_cv_uscore=yes >> config.site
 env \
   CONFIG_SITE=config.site \
   CFLAGS="\
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
     " \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
@@ -163,15 +178,15 @@ env \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
 ./autogen.sh \
-  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
+  --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
   --with-pcre=internal \
   --with-python=python3
 
 make -j11
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Glib
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Glib
 ```
 
 ## LibMBIM 1.26.4
@@ -188,8 +203,8 @@ TODO
 ```
 env \
   CFLAGS="\
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
     " \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
@@ -198,14 +213,14 @@ env \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
 ./autogen.sh \
-  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
+  --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
   --disable-Werror
 
 make -j11
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibMBIM
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibMBIM
 ```
 
 ## LibQMI 1.30.8
@@ -222,8 +237,8 @@ TODO
 ```
 env \
   CFLAGS="\
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
     " \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
@@ -232,7 +247,7 @@ env \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
 ./autogen.sh \
-  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
+  --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
   --disable-Werror
@@ -256,8 +271,8 @@ TODO
 ```
 env \
   CFLAGS="\
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
     " \
   LDFLAGS="\
     -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
@@ -266,7 +281,7 @@ env \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     " \
 ./autogen.sh \
-  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
+  --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
   --disable-Werror

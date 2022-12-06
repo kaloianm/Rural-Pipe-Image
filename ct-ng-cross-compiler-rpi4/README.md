@@ -12,6 +12,7 @@ sudo apt install \
     flex \
     gawk \
     gettext \
+    gtk-doc-tools \
     help2man \
     libbz2-1.0 libbz2-dev \
     libffi8 libffi-dev \
