@@ -34,6 +34,6 @@ sudo apt install \
 
 ./bootstrap
 ./configure --prefix=$HOME/.local
-make -j9
+make -j11
 make install
 ```
