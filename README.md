@@ -343,7 +343,7 @@ mkdir build-rpi && cd "$_"
 env \
   CHOST=armhf \
 ../configure \
-  --prefix=$X_COMPILE_SYSROOT_PREFIX/usr/local \
+  --prefix=/usr/local \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --disable-sanity-checks
 
