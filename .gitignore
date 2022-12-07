@@ -9,6 +9,11 @@ build/*
 staging/*.deb
 staging/RPI-DBus/usr
 staging/RPI-Glib/usr
+staging/RPI-LibMBIM/usr
+staging/RPI-LibQMI/usr
+staging/RPI-LibQRTR/usr
+staging/RPI-ModemManager/lib
+staging/RPI-ModemManager/usr
 staging/RPI-OpenSSL/usr
 staging/RPI-Python3/usr
 

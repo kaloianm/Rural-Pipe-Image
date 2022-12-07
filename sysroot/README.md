@@ -41,8 +41,8 @@ ln -sf ../../../lib/arm-linux-gnueabihf/libsepol.so.1 usr/lib/arm-linux-gnueabih
 ln -sf ../../../lib/arm-linux-gnueabihf/libtirpc.so.3.0.0 usr/lib/arm-linux-gnueabihf/libtirpc.so
 ln -sf ../../../lib/arm-linux-gnueabihf/libz.so.1.2.11 usr/lib/arm-linux-gnueabihf/libz.so
 
-for i in `grep -R '[= ]/usr' --include *.pc --include *.la | awk -F\: '{ print $1; }' | sort | uniq`; do
- perl -pi -e 's/ \/usr/ \/home\/parallels\/x-tools\/armv8-RuralPipe-linux-gnueabihf\/armv8-RuralPipe-linux-gnueabihf\/sysroot\/usr/g' $i;
- perl -pi -e 's/=\/usr/=\/home\/parallels\/x-tools\/armv8-RuralPipe-linux-gnueabihf\/armv8-RuralPipe-linux-gnueabihf\/sysroot\/usr/g' $i;
+for i in `grep -R '[= ]/usr/local' --include *.la | awk -F\: '{ print $1; }' | sort | uniq`; do
+ perl -pi -e 's/ \/usr\/local/ \/home\/parallels\/x-tools\/armv8-RuralPipe-linux-gnueabihf\/armv8-RuralPipe-linux-gnueabihf\/sysroot\/usr\/local/g' $i;
+ perl -pi -e 's/=\/usr\/local/=\/home\/parallels\/x-tools\/armv8-RuralPipe-linux-gnueabihf\/armv8-RuralPipe-linux-gnueabihf\/sysroot\/usr\/local/g' $i;
 done
 ```

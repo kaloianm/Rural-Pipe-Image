@@ -67,19 +67,19 @@ mkdir build-dev-machine && cd "$_"
 
 make -j11
 sudo make install
+sudo ldconfig
 ```
 
 ### Cross-compile
 ```
 mkdir build-rpi && cd "$_"
 
+echo ac_cv_file__dev_ptmx=yes >> config.site
 echo ac_cv_file__dev_ptc=no >> config.site
-echo ac_cv_file__dev_ptmx=no >> config.site
 
 env \
   CONFIG_SITE=config.site \
   CFLAGS="\
-    -I$X_COMPILE_SYSROOT_PREFIX/usr/include \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
     " \
@@ -223,6 +223,40 @@ make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibMBIM
 ```
 
+## LibQRTR 1.0.0
+```
+git clone --depth 1 --branch 1.0.0 --single-branch https://gitlab.freedesktop.org/mobile-broadband/libqrtr-glib.git
+```
+
+### Local compile
+```
+TODO
+```
+
+### Cross-compile
+```
+env \
+  CFLAGS="\
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
+    -I$X_COMPILE_SYSROOT_PREFIX/usr/include/tirpc \
+    " \
+  LDFLAGS="\
+    -L$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
+    -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
+    " \
+./autogen.sh \
+  --prefix=/usr/local \
+  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
+  --enable-shared \
+  --disable-Werror
+
+make -j11
+make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibQRTR
+```
+
 ## LibQMI 1.30.8
 ```
 git clone --depth 1 --branch 1.30.8 --single-branch https://gitlab.freedesktop.org/mobile-broadband/libqmi.git
@@ -253,8 +287,8 @@ env \
   --disable-Werror
 
 make -j11
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibQMI
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibQMI
 ```
 
 ## ModemManager 1.18
@@ -269,6 +303,8 @@ TODO
 
 ### Cross-compile
 ```
+git apply ../../patches/ModemManager-1.18.12-glib-bin-pkg-config.patch
+
 env \
   CFLAGS="\
     -I$X_COMPILE_SYSROOT_PREFIX/usr/include/arm-linux-gnueabihf \
