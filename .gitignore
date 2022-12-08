@@ -9,6 +9,7 @@ build/*
 staging/*.deb
 staging/RPI-DBus/usr
 staging/RPI-Glib/usr
+staging/RPI-GlibC/usr
 staging/RPI-LibMBIM/usr
 staging/RPI-LibQMI/usr
 staging/RPI-LibQRTR/usr
