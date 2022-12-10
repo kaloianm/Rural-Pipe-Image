@@ -164,7 +164,7 @@ TODO
 ### Cross-compile
 ```
 echo glib_cv_stack_grows=no >> config.site
-echo glib_cv_uscore=yes >> config.site
+echo glib_cv_uscore=no >> config.site
 
 env \
   CONFIG_SITE=config.site \
