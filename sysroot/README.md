@@ -20,6 +20,7 @@ apt download \
   libreadline8 libreadline-dev \
   libselinux1 libselinux1-dev \
   libsepol1 libsepol1-dev \
+  libssl1.1 libssl-dev \
   libtinfo6 libtinfo-dev \
   libtirpc3 libtirpc-dev \
   libudev1 libudev-dev \
@@ -29,6 +30,8 @@ apt download \
 
 Then, on the build machine:
 ```
+chmod -R a+w $X_COMPILE_SYSROOT_PREFIX
+
 for i in *.deb; do dpkg-deb --extract $i .; done && rm *.deb
 
 ln -sf ../../../lib/arm-linux-gnueabihf/libbz2.so.1.0 usr/lib/arm-linux-gnueabihf/libbz2.so

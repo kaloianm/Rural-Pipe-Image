@@ -1,5 +1,6 @@
-Package: RPI-LibQMI
-Version: 1.30.8-RPI
+Package: RPI-libqmi-glib
+Version: 1.30.8+RPI
+Depends: RPI-libglib2.0
 Maintainer: Kaloian Manassiev
 Architecture: armhf
 Description: LibQMI for the RuralPipe dependencies

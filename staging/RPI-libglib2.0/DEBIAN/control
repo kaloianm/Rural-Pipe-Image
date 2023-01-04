@@ -1,0 +1,6 @@
+Package: RPI-libglib2.0
+Version: 2.58.3+RPI
+Depends: RPI-dbus
+Maintainer: Kaloian Manassiev
+Architecture: armhf
+Description: Libglib2.0 for the RuralPipe dependencies

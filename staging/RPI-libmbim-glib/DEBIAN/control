@@ -1,0 +1,6 @@
+Package: RPI-libmbim-glib
+Version: 1.26.4+RPI
+Depends: RPI-libglib2.0
+Maintainer: Kaloian Manassiev
+Architecture: armhf
+Description: Libmbim-glib for the RuralPipe dependencies

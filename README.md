@@ -19,40 +19,10 @@ In order to start the cross-compilation environment locally, use the following s
 ./x-compile-env.sh armv8-RuralPipe-linux-gnueabihf
 ```
 
-## OPENSSL 3
-Openssl3 is a prerequisite for the Python `_ssl` module.
-```
-git clone --depth 1 --branch openssl-3.0.7 --single-branch https://github.com/openssl/openssl.git
-```
-
-### Local compile
-```
-mkdir build-dev-machine && cd "$_"
-
-../Configure --prefix=/usr/local/ --openssldir=/usr/local/ -Wl,-rpath=/usr/local/lib -Wl,--enable-new-dtags
-
-make -j11
-sudo make install
-```
-
-### Cross-compile
-```
-mkdir build-rpi && cd "$_"
-
-../Configure linux-generic32 \
-  --prefix=/usr/local --openssldir=/usr/local \
-  -Wl,-rpath=/usr/local/lib \
-  -Wl,--enable-new-dtags
-
-make -j11
-make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-OpenSSL
-```
-
 ## PYTHON 3.11
 Some of the RuralPipe's modules use functionality from a later Python so we build version 3.11.
 ```
-git clone --depth 1 --branch v3.11.0 --single-branch https://github.com/python/cpython.git
+git clone --depth 1 --branch v3.11.1 --single-branch https://github.com/python/cpython.git
 ```
 
 ### Local compile
@@ -61,13 +31,13 @@ mkdir build-dev-machine && cd "$_"
 
 ../configure -C \
   --prefix=/usr/local \
-  --with-openssl=/usr/local --with-openssl-rpath=auto \
   --enable-optimizations \
   --with-computed-gotos
 
 make -j11
 sudo make install
 sudo ldconfig
+sudo python3.11 -m pip install --upgrade pip setuptools wheel
 ```
 
 ### Cross-compile
@@ -88,14 +58,12 @@ env \
     -L$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/lib/arm-linux-gnueabihf \
     -Wl,-rpath-link=$X_COMPILE_SYSROOT_PREFIX/usr/lib/arm-linux-gnueabihf \
-    -Wl,-rpath=/usr/local/lib \
     " \
 ../configure -C \
   --prefix=/usr/local \
+  --with-openssl=$X_COMPILE_SYSROOT_PREFIX/usr --with-openssl-rpath=auto \
   --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
   --enable-shared \
-  --with-openssl=$X_COMPILE_SYSROOT_PREFIX/usr/local \
-  --with-openssl-rpath=/usr/local/lib \
   --with-system-expat \
   --with-system-ffi \
   --with-build-python=/usr/local/bin/python3.11 \
@@ -109,7 +77,7 @@ patchelf --add-needed /usr/lib/arm-linux-gnueabihf/libffi.so.7 ./build/lib.linux
 patchelf --add-needed /lib/arm-linux-gnueabihf/libexpat.so.1 ./build/lib.linux-arm-3.11/pyexpat.cpython-311-arm-linux-gnueabihf.so
 
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Python3
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-python3.11
 ```
 
 ## DBUS 1.14
@@ -147,7 +115,7 @@ env \
 
 make -j11
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-DBus
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-dbus
 ```
 
 ## GLib 2.58.3
@@ -189,7 +157,7 @@ env \
 
 make -j11
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-Glib
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-libglib2.0
 ```
 
 ## LibMBIM 1.26.4
@@ -224,7 +192,7 @@ env \
 
 make -j11
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibMBIM
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-libmbim-glib
 ```
 
 ## LibQRTR 1.0.0
@@ -259,7 +227,7 @@ env \
 
 make -j11
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibQRTR
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-libqrtr-glib
 ```
 
 ## LibQMI 1.30.8
@@ -294,7 +262,7 @@ env \
 
 make -j11
 make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-LibQMI
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-libqmi-glib
 ```
 
 ## ModemManager 1.18
@@ -330,7 +298,7 @@ env \
   --disable-Werror
 
 make -j11
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-ModemManager
+make install DESTDIR=$X_COMPILE_STAGING_PREFIX/modemmanager
 ```
 
 ## GLIBC (Optional)

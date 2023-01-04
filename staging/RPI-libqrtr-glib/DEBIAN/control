@@ -1,0 +1,6 @@
+Package: RPI-libqrtr-glib
+Version: 1.0.0+RPI
+Depends: RPI-libglib2.0
+Maintainer: Kaloian Manassiev
+Architecture: armhf
+Description: Libqrtr-glib for the RuralPipe dependencies

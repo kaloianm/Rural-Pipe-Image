@@ -1,5 +1,0 @@
-Package: RPI-Python3
-Version: 3.11.0-RPI
-Maintainer: Kaloian Manassiev
-Architecture: armhf
-Description: Python 3 for the RuralPipe dependencies

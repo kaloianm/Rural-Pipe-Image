@@ -1,5 +1,0 @@
-Package: RPI-LibQRTR
-Version: 1.0.0-RPI
-Maintainer: Kaloian Manassiev
-Architecture: armhf
-Description: LibQRTR for the RuralPipe dependencies

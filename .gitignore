@@ -7,16 +7,16 @@ build/*
 !build/README.md
 
 staging/*.deb
-staging/RPI-DBus/usr
-staging/RPI-Glib/usr
+staging/modemmanager/lib
+staging/modemmanager/usr
+staging/RPI-dbus/usr
 staging/RPI-GlibC/usr
-staging/RPI-LibMBIM/usr
-staging/RPI-LibQMI/usr
-staging/RPI-LibQRTR/usr
-staging/RPI-ModemManager/lib
-staging/RPI-ModemManager/usr
-staging/RPI-OpenSSL/usr
-staging/RPI-Python3/usr
+staging/RPI-libglib2.0/usr
+staging/RPI-libmbim-glib/usr
+staging/RPI-libqmi-glib/usr
+staging/RPI-libqrtr-glib/usr
+staging/RPI-openssl/usr
+staging/RPI-python3.11/usr
 
 sysroot/*
 !sysroot/README.md

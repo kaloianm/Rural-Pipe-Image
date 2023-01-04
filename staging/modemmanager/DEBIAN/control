@@ -1,5 +1,6 @@
-Package: RPI-ModemManager
-Version: 1.18.12-RPI
+Package: modemmanager
+Version: 1.18.12+RPI
+Depends: RPI-libqmi-glib, RPI-libqrtr-glib, RPI-libmbim-glib
 Maintainer: Kaloian Manassiev
 Architecture: armhf
 Description: ModemManager for the RuralPipe dependencies
