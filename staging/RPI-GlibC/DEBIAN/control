@@ -1,5 +1,0 @@
-Package: RPI-GlibC
-Version: 3.26-RPI
-Maintainer: Kaloian Manassiev
-Architecture: armhf
-Description: (Optional) GlibC for the RuralPipe dependencies

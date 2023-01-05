@@ -2,6 +2,7 @@
 Tested against [crosstool-NG](https://github.com/crosstool-ng/crosstool-ng) version 1.25.0. Follow the instructions below to install it and then execute `ct-ng build` in this directory.
 ```
 git clone --depth 1 --branch crosstool-ng-1.25.0 --single-branch https://github.com/crosstool-ng/crosstool-ng.git
+cd crosstool-ng
 
 sudo apt install \
     autoconf autoconf-archive \
@@ -22,6 +23,7 @@ sudo apt install \
     libncurses-dev \
     libnsl2 libnsl-dev \
     libreadline8 libreadline-dev \
+    libssl-dev \
     libtirpc3 libtirpc-dev \
     libtool-bin \
     libuuid1 uuid-dev \

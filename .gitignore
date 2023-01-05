@@ -10,7 +10,6 @@ staging/*.deb
 staging/modemmanager/lib
 staging/modemmanager/usr
 staging/RPI-dbus/usr
-staging/RPI-GlibC/usr
 staging/RPI-libglib2.0/usr
 staging/RPI-libmbim-glib/usr
 staging/RPI-libqmi-glib/usr

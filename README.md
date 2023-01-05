@@ -19,7 +19,7 @@ In order to start the cross-compilation environment locally, use the following s
 ./x-compile-env.sh armv8-RuralPipe-linux-gnueabihf
 ```
 
-## PYTHON 3.11
+## PYTHON3 3.11
 Some of the RuralPipe's modules use functionality from a later Python so we build version 3.11.
 ```
 git clone --depth 1 --branch v3.11.1 --single-branch https://github.com/python/cpython.git
@@ -118,7 +118,7 @@ make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-dbus
 ```
 
-## GLib 2.58.3
+## LIBGLIB2.0 2.58.3
 The Glib library is prerequisite for the ModemManager service.
 ```
 git clone --depth 1 --branch 2.58.3 --single-branch https://gitlab.gnome.org/GNOME/glib.git
@@ -160,7 +160,7 @@ make install DESTDIR=$X_COMPILE_SYSROOT_PREFIX
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-libglib2.0
 ```
 
-## LibMBIM 1.26.4
+## LIBMBIM-GLIB 1.26.4
 ```
 git clone --depth 1 --branch 1.26.4 --single-branch https://gitlab.freedesktop.org/mobile-broadband/libmbim.git
 ```
@@ -299,29 +299,4 @@ env \
 
 make -j11
 make install DESTDIR=$X_COMPILE_STAGING_PREFIX/modemmanager
-```
-
-## GLIBC (Optional)
-```
-git clone --depth 1 --branch release/2.36/master --single-branch https://sourceware.org/git/glibc.git
-```
-
-### Local compile
-```
-TODO
-```
-
-### Cross-compile
-```
-mkdir build-rpi && cd "$_"
-
-env \
-  CHOST=armhf \
-../configure \
-  --prefix=/usr/local \
-  --host=armv8-unknown-linux-gnueabihf --build=aarch64-unknown-linux-gnu \
-  --disable-sanity-checks
-
-make -j11
-make install DESTDIR=$X_COMPILE_STAGING_PREFIX/RPI-GlibC
 ```
